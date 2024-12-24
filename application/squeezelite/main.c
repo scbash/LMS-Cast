@@ -342,7 +342,7 @@ uint32_t sq_get_metadata(sq_dev_handle_t handle, metadata_t *metadata, int token
 	// use -1 to get what's playing
 	if (token == -1) index = 0;
 
-	sprintf(cmd, "%s status - %d tags:xcfldatgrKNoITH", ctx->cli_id, index + 1);
+	sprintf(cmd, "%s status - %d tags:xcfldAtgrKNoITH", ctx->cli_id, index + 1);
 	rsp = cli_send_cmd(cmd, false, false, ctx);
 
 	if (!rsp || !*rsp) {
@@ -378,11 +378,19 @@ uint32_t sq_get_metadata(sq_dev_handle_t handle, metadata_t *metadata, int token
 
 	if (cur) {
 		metadata->title = cli_find_tag(cur, "title");
-		metadata->artist = cli_find_tag(cur, "artist");
 		metadata->album = cli_find_tag(cur, "album");
 		metadata->genre = cli_find_tag(cur, "genre");
 		metadata->remote_title = cli_find_tag(cur, "remote_title");
 		metadata->artwork = cli_find_tag(cur, "artwork_url");
+
+		// TODO: displayartist should be "artist role" preference set via web UI
+		if ((p = cli_find_tag(cur, "displayartist")) != NULL) {
+			metadata->artist = p;
+			LOG_WARN("[%p] scb -- found DisplayArtist! %s", ctx, metadata->artist);
+		} else {
+			metadata->artist = cli_find_tag(cur, "artist");
+			LOG_WARN("[%p] scb -- fell back to artist: %s", ctx, metadata->artist);
+		}
 
 		if ((p = cli_find_tag(cur, "duration")) != NULL) {
 			/* when it's a repeating track, duration must hold the full block length while
