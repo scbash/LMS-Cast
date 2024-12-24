@@ -386,10 +386,10 @@ uint32_t sq_get_metadata(sq_dev_handle_t handle, metadata_t *metadata, int token
 		// TODO: displayartist should be "artist role" preference set via web UI
 		if ((p = cli_find_tag(cur, "displayartist")) != NULL) {
 			metadata->artist = p;
-			LOG_WARN("[%p] scb -- found DisplayArtist! %s", ctx, metadata->artist);
+			LOG_DEBUG("[%p] found DisplayArtist! %s", ctx, metadata->artist);
 		} else {
 			metadata->artist = cli_find_tag(cur, "artist");
-			LOG_WARN("[%p] scb -- fell back to artist: %s", ctx, metadata->artist);
+			LOG_DEBUG("[%p] fell back to artist: %s", ctx, metadata->artist);
 		}
 
 		if ((p = cli_find_tag(cur, "duration")) != NULL) {
